@@ -1158,7 +1158,7 @@ import_includes_deps := $(strip \
 $(import_includes): PRIVATE_IMPORT_EXPORT_INCLUDES := $(import_includes_deps)
 $(import_includes) : $(import_includes_deps)
 	@echo Import includes file: $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@
+	$(hide) mkdir -p $(dir $@) && rm -rf $@
 ifdef import_includes_deps
 	$(hide) for f in $(PRIVATE_IMPORT_EXPORT_INCLUDES); do \
 	  cat $$f >> $@; \
@@ -1421,7 +1421,7 @@ $(export_includes): PRIVATE_REEXPORTED_INCLUDES := $(export_include_deps)
 # generated after the headers, so this is a convenient way to ensure the headers exist.
 $(export_includes) : $(proto_generated_headers) $(dbus_generated_headers) $(aidl_gen_cpp) $(export_include_deps)
 	@echo Export includes file: $< -- $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@.tmp && touch $@.tmp
+	$(hide) mkdir -p $(dir $@) && rm -rf $@.tmp && touch $@.tmp
 ifdef my_export_c_include_dirs
 	$(hide) for d in $(PRIVATE_EXPORT_C_INCLUDE_DIRS); do \
 	        echo "-I $$d" >> $@.tmp; \

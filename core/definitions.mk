@@ -883,7 +883,7 @@ define transform-d-to-p-args
 $(hide) cp $(1) $(2); \
 	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 		-e '/^$$/ d' -e 's/$$/ :/' < $(1) >> $(2); \
-	rm -f $(1)
+	rm -rf $(1)
 endef
 
 define transform-d-to-p
@@ -1471,7 +1471,7 @@ endef
 define transform-o-to-static-lib
 @echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
-@rm -f $@
+@rm -rf $@
 $(extract-and-include-target-whole-static-libs)
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
@@ -1527,7 +1527,7 @@ endef
 
 define delete-dummy.o-if-no-objs
 $(if $(PRIVATE_ALL_OBJECTS),,$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) d $@ $(dir $@)dummy.o \
-  && rm -f $(dir $@)dummy.o)
+  && rm -rf $(dir $@)dummy.o)
 endef
 endif  # HOST_OS is darwin
 
@@ -1536,7 +1536,7 @@ endif  # HOST_OS is darwin
 define transform-host-o-to-static-lib
 @echo "$($(PRIVATE_PREFIX)DISPLAY) StaticLib: $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
-@rm -f $@
+@rm -rf $@
 $(extract-and-include-host-whole-static-libs)
 $(create-dummy.o-if-no-objs)
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) \
@@ -1840,7 +1840,7 @@ endef
 
 # dump-words-to-file, <word list>, <output file>
 define dump-words-to-file
-        @rm -f $(2)
+        @rm -rf $(2)
         @touch $(2)
         @$(call emit-line,$(wordlist 1,200,$(1)),$(2))
         @$(call emit-line,$(wordlist 201,400,$(1)),$(2))
@@ -1906,7 +1906,7 @@ endef
 # $(1): javac
 # $(2): bootclasspath
 define compile-java
-$(hide) rm -f $@
+$(hide) rm -rf $@
 $(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
@@ -1931,8 +1931,8 @@ $(hide) if [ -s $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq ] ; the
 fi
 $(if $(PRIVATE_JAVA_LAYERS_FILE), $(hide) build/tools/java-layers.py \
     $(PRIVATE_JAVA_LAYERS_FILE) \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq,)
-$(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list
-$(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
+$(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list
+$(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
 $(if $(PRIVATE_JAR_EXCLUDE_FILES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
     -name $(word 1, $(PRIVATE_JAR_EXCLUDE_FILES)) \
     $(addprefix -o -name , $(wordlist 2, 999, $(PRIVATE_JAR_EXCLUDE_FILES))) \
@@ -1966,8 +1966,8 @@ endef
 #   list length problems with Cygwin
 # - we filter out duplicate java file names because Jack doesn't like them.
 define jack-java-to-dex
-$(hide) rm -f $@
-$(hide) rm -f $(PRIVATE_CLASSES_JACK)
+$(hide) rm -rf $@
+$(hide) rm -rf $(PRIVATE_CLASSES_JACK)
 $(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(dir $(PRIVATE_CLASSES_JACK))
@@ -2016,7 +2016,7 @@ $(call call-jack) \
     $$tmpEcjArg \
     || ( rm -rf $(PRIVATE_CLASSES_JACK); exit 41 )
 $(hide) mv $(PRIVATE_JACK_INTERMEDIATES_DIR)/classes*.dex $(dir $@)
-$(hide) rm -f $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list
+$(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(hide) rm -rf $@.res.tmp)
 $(hide) mv $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq $(PRIVATE_JACK_INTERMEDIATES_DIR).java-source-list
 $(if $(PRIVATE_JAR_PACKAGES), $(hide) echo unsupported options PRIVATE_JAR_PACKAGES in $@; exit 53)
@@ -2031,9 +2031,9 @@ endef
 #   list length problems with Cygwin
 # - we filter out duplicate java file names because Jack doesn't like them.
 define jack-check-java
-$(hide) rm -f $@
-$(hide) rm -f $@.java-source-list
-$(hide) rm -f $@.java-source-list-uniq
+$(hide) rm -rf $@
+$(hide) rm -rf $@.java-source-list
+$(hide) rm -rf $@.java-source-list-uniq
 $(hide) mkdir -p $(dir $@)
 $(if $(PRIVATE_JACK_INCREMENTAL_DIR),$(hide) mkdir -p $(PRIVATE_JACK_INCREMENTAL_DIR))
 $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$@.java-source-list)
@@ -2137,7 +2137,7 @@ endif  # TARGET_BUILD_APPS
 #   list length problems with Cygwin
 # - we filter out duplicate java file names because Jack doesn't like them.
 define java-to-jack
-$(hide) rm -f $@
+$(hide) rm -rf $@
 $(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(PRIVATE_JACK_INTERMEDIATES_DIR)
@@ -2179,8 +2179,8 @@ $(call call-jack) \
     $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
     $(if $(PRIVATE_JACK_PROGUARD_FLAGS),--config-proguard $@.flags) \
     $$tmpEcjArg \
-    || ( rm -f $@ ; exit 41 )
-$(hide) rm -f $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list
+    || ( rm -rf $@ ; exit 41 )
+$(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(hide) rm -rf $@.res.tmp)
 $(hide) mv $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq $(PRIVATE_JACK_INTERMEDIATES_DIR).java-source-list
 $(if $(PRIVATE_JAR_PACKAGES), $(hide) echo unsupported options PRIVATE_JAR_PACKAGES in $@; exit 53)
@@ -2285,7 +2285,7 @@ endef
 define add-java-resources-to
 $(call dump-words-to-file, $(PRIVATE_EXTRA_JAR_ARGS), $(1).jar-arg-list)
 $(hide) jar uf $(1) @$(1).jar-arg-list
-@rm -f $(1).jar-arg-list
+@rm -rf $(1).jar-arg-list
 endef
 
 # Add resources carried by static Jack libraries.
@@ -2431,7 +2431,7 @@ endef
 # won't break anything.
 define copy-file-to-target
 @mkdir -p $(dir $@)
-$(hide) rm -f $@
+$(hide) rm -rf $@
 $(hide) cp $< $@
 endef
 
@@ -2439,14 +2439,14 @@ endef
 # cp command instead of acp.
 define copy-file-to-target-with-cp
 @mkdir -p $(dir $@)
-$(hide) rm -f $@
+$(hide) rm -rf $@
 $(hide) cp -p $< $@
 endef
 
 # The same as copy-file-to-target, but use the zipalign tool to do so.
 define copy-file-to-target-with-zipalign
 @mkdir -p $(dir $@)
-$(hide) rm -f $@
+$(hide) rm -rf $@
 $(hide) $(ZIPALIGN) -f 4 $< $@
 endef
 
@@ -2454,7 +2454,7 @@ endef
 # comments (for config files and such).
 define copy-file-to-target-strip-comments
 @mkdir -p $(dir $@)
-$(hide) rm -f $@
+$(hide) rm -rf $@
 $(hide) sed -e 's/#.*$$//' -e 's/[ \t]*$$//' -e '/^$$/d' < $< > $@
 endef
 
@@ -2462,7 +2462,7 @@ endef
 # the old modification time.
 define copy-file-to-new-target
 @mkdir -p $(dir $@)
-$(hide) rm -f $@
+$(hide) rm -rf $@
 $(hide) cp $< $@
 endef
 
@@ -2470,7 +2470,7 @@ endef
 # cp command instead of acp.
 define copy-file-to-new-target-with-cp
 @mkdir -p $(dir $@)
-$(hide) rm -f $@
+$(hide) rm -rf $@
 $(hide) cp $< $@
 endef
 
@@ -2762,7 +2762,7 @@ include $(BUILD_SYSTEM)/distdir.mk
 #	  cp $(df).d $(df).P; \
 #	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 #	      -e '/^$$/ d' -e 's/$$/ :/' < $(df).d >> $(df).P; \
-#	  rm -f $(df).d
+#	  rm -rf $(df).d
 #	$(COMPILE.c) -o $@ $<
 
 #-include $(SRCS:%.c=$(DEPDIR)/%.P)
@@ -2773,4 +2773,4 @@ include $(BUILD_SYSTEM)/distdir.mk
 #	@cp $*.d $*.P; \
 #	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 #	      -e '/^$$/ d' -e 's/$$/ :/' < $*.d >> $*.P; \
-#	  rm -f $*.d
+#	  rm -rf $*.d

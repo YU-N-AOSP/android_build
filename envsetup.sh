@@ -1266,7 +1266,7 @@ function tracedmdump()
     fi
 
     echo "post-processing traces..."
-    rm -f $TRACE/qtrace.dexlist
+    rm -rf $TRACE/qtrace.dexlist
     post_trace $TRACE
     if [ $? -ne 0 ]; then
         echo "***"

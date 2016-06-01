@@ -545,7 +545,7 @@ endif # LOCAL_PROGUARD_ENABLED defined
 $(built_dex): $(built_dex_intermediate) | $(ACP)
 	@echo Copying: $@
 	$(hide) mkdir -p $(dir $@)
-	$(hide) rm -f $(dir $@)/classes*.dex
+	$(hide) rm -rf $(dir $@)/classes*.dex
 	$(hide) $(ACP) -fp $(dir $<)/classes*.dex $(dir $@)
 
 findbugs_xml := $(intermediates.COMMON)/findbugs.xml
